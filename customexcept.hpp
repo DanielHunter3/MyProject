@@ -32,3 +32,13 @@ public:
         return message;
     }
 };
+
+class CreateDirectoryException : public std::exception {
+private:
+    const char* message;
+public:
+    CreateDirectoryException(const char* message) : message(message) {}
+    const char* what() const noexcept override {
+        return message;
+    }
+};
