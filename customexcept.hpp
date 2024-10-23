@@ -42,3 +42,13 @@ public:
         return message;
     }
 };
+
+class ChangeDirectoryException : public std::exception {
+private:
+    const char* message;
+public:
+    ChangeDirectoryException(const char* message) : message(message) {}
+    const char* what() const noexcept override {
+        return message;
+    }
+};

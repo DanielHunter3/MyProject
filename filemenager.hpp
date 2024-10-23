@@ -31,3 +31,7 @@ std::vector<std::string> getFilesAndDirectories(const std::string& directoryPath
     result.insert(result.end(), files.begin(), files.end());
     return result;
 }
+
+std::string getCurrentWorkingDirectory() {
+    return std::filesystem::current_path().string();
+}
