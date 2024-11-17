@@ -5,50 +5,80 @@
 
 class FileNotFoundException : public std::exception {
 private:
-    const char* message;
+    const char* m_message;
 public:
-    FileNotFoundException(const char* message) : message(message) {}
+    FileNotFoundException(const char* message) : m_message(message) {}
     const char* what() const noexcept override {
-        return message;
+        return m_message;
     }
 };
 
 class FileWriteException : public std::exception {
 private:
-    const char* message;
+    const char* m_message;
 public:
-    FileWriteException(const char* message) : message(message) {}
+    FileWriteException(const char* message) : m_message(message) {}
     const char* what() const noexcept override {
-        return message;
+        return m_message;
     }
 };
 
 class FileReadException : public std::exception {
-private:
-    const char* message;
 public:
-    FileReadException(const char* message) : message(message) {}
+    FileReadException(const char* message) : m_message(message) {}
     const char* what() const noexcept override {
-        return message;
+        return m_message;
     }
+private:
+    const char* m_message;
+};
+
+class FileDeleteException : public std::exception {
+public:
+    FileDeleteException(const char* message) : m_message(message) {}
+    const char* what() const noexcept override {
+        return m_message;
+    }
+private:
+    const char* m_message;
 };
 
 class CreateDirectoryException : public std::exception {
-private:
-    const char* message;
 public:
-    CreateDirectoryException(const char* message) : message(message) {}
+    CreateDirectoryException(const char* message) : m_message(message) {}
     const char* what() const noexcept override {
-        return message;
+        return m_message;
     }
+private:
+    const char* m_message;
 };
 
 class ChangeDirectoryException : public std::exception {
-private:
-    const char* message;
 public:
-    ChangeDirectoryException(const char* message) : message(message) {}
+    ChangeDirectoryException(const char* message) : m_message(message) {}
     const char* what() const noexcept override {
-        return message;
+        return m_message;
     }
+private:
+    const char* m_message;
+};
+
+class FileCreateException : public std::exception {
+public:
+    FileCreateException(const char* message) : m_message(message) {}
+    const char* what() const noexcept override {
+        return m_message;
+    }
+private:
+    const char* m_message;
+};
+
+class DeleteDirectoryException : public std::exception {
+public:
+    DeleteDirectoryException(const char* message) : m_message(message) {}
+    const char* what() const noexcept override {
+        return m_message;
+    }
+private:
+    const char* m_message;
 };
