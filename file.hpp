@@ -12,12 +12,13 @@ namespace fs = std::filesystem;
 
 class File {
 public:
-    File(const std::string filename) 
-        : m_filename(filename) {
-            if (!fs::exists(filename)) {
-                throw FileNotFoundException(("File not found: " + filename).c_str());
-            }
+    File(const std::string& filename) 
+        : m_filename(filename) 
+    {
+        if (!fs::exists(filename)) {
+            throw FileNotFoundException(("File not found: " + filename).c_str());
         }
+    }
 
     void writeFile(const std::string& string, std::ios_base::openmode mode = std::ios::out) {
         std::ofstream file(m_filename, mode);
@@ -49,9 +50,9 @@ public:
         fs::copy(m_filename, dest);
     }
 
-    std::string returnPermissions(const fs::path& path) {
-    fs::perms p = fs::status(path).permissions();
-    return std::format("Permissions for {}: {}{}{}{}{}{}{}{}{}: \n", path,
+    std::string returnPermissions() {
+        fs::perms p = fs::status(m_filename).permissions();
+        return std::format("Permissions for {}: {}{}{}{}{}{}{}{}{}: \n", m_filename,
               ((p & fs::perms::owner_read) != fs::perms::none ? "r" : "-"),
               ((p & fs::perms::owner_write) != fs::perms::none ? "w" : "-"),
               ((p & fs::perms::owner_exec) != fs::perms::none ? "x" : "-"),
@@ -67,6 +68,17 @@ public:
     void setPermissions(const fs::perms& permissions) {
         fs::permissions(m_filename, permissions);
     }
+
+    void reperm(const fs::perms& permission, bool isActive) {
+        fs::perms p = fs::status(m_filename).permissions();
+        if (isActive) { p |= permission; } 
+        else { p &= ~permission; }
+    }
+
+    std::string pwdFile() {
+        return fs::absolute(m_filename).string();
+    }
+
 private:
     std::string m_filename;
 };

@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <iostream>
+#include <iostream>
 
-int main() {
-    
-}
+#include "terminal.hpp"
+
+int main() {}
