@@ -9,20 +9,21 @@
 #include "file.hpp"
 #include "directory.hpp"
 #include "details.hpp"
+#include "funcptr.hpp"
 
 std::vector<std::string> directoryUserCommand(const std::vector<std::string>& tokens,
-                        const std::string& command, 
+                        const std::string& aCommand, 
                         int8_t& quantityOfParameters) 
 {
-    if (command != "ls") {
+    if (aCommand != "ls") {
         //----------------------------------------------------------------
         if (quantityOfParameters == 0) {
             throw std::invalid_argument("Missing directory name");
         }
         //----------------------------------------------------------------
-        if (command == "mkdir") { createDirectory(tokens[1]); }
-        else if (command == "rmdir") { deleteDirectory(tokens[1]); }
-        else if (command == "cd") {
+        if (aCommand == "mkdir") { createDirectory(tokens[1]); }
+        else if (aCommand == "rmdir") { deleteDirectory(tokens[1]); }
+        else if (aCommand == "cd") {
             changeDirectory(tokens[1]);
             return getFilesAndDirectories(getCurrentWorkingDirectory());
         }
@@ -39,53 +40,55 @@ std::vector<std::string> directoryUserCommand(const std::vector<std::string>& to
     return std::vector<std::string>();
 }
 
+// Почему не работает touch?
 std::string fileUserCommand(const std::vector<std::string>& tokens,
-                        const std::string& command, 
+                        const std::string& aCommand, 
                         int8_t& quantityOfParameters) 
 {
-    const std::array<std::string, 2> minOneParameters { "cat", "rm" };
-    const std::array<std::string, 5> minTwoParameters { "touch", "rename", "copy", "cut", "pwd" };
+    const std::array<std::string, 2> minOneParameters { "cat", "pwd" };
+    const std::array<std::string, 4> minTwoParameters { "rename", "cp", "cut" "echo" };
     const std::array<std::string, 2> minThreeParameters { "perm", "repem" };
+
+    if (aCommand == "touch" || aCommand == "rm") {
+        return getFunctionOfMDFile(aCommand, tokens)();
+    }
 
     try {
         std::unique_ptr<File> file(new File(tokens.at(1)));
 
-        if (in(minOneParameters, command)) {
+        if (in(minOneParameters, aCommand)) {
             //----------------------------------------------------------------
             if (quantityOfParameters < 1) {
-                throw std::invalid_argument("invalid number of parameters");
+                throw std::invalid_argument("Invalid number of parameters (qop < 1)\n");
             }
             //----------------------------------------------------------------
-            if (command == "cat")  { return file->readFile(); }
-            else if (command == "rm") { deleteFile(tokens[1]); }
+            return getFunctionOfExistFile(aCommand, file, tokens)();
         }
-        else if (in(minTwoParameters, command)) {
+        else if (in(minTwoParameters, aCommand)) {
             //----------------------------------------------------------------
             if (quantityOfParameters < 2) {
-                throw std::invalid_argument("invalid number of parameters");
+                throw std::invalid_argument("Invalid number of parameters (qop < 2)\n");
             }
             //----------------------------------------------------------------
-            if (command == "touch") { file->writeFile(tokens[2]); }
-            else if (command == "rename") { file->renameFile(tokens[2]); }
-            else if (command == "copy") { file->copyFile(tokens[2]); }
-            else if (command == "cut") { 
-                file->copyFile(tokens[2]);
-                deleteFile(tokens[1]);
+            return getFunctionOfExistFile(aCommand, file, tokens)();
+        }
+        else if (in(minThreeParameters, aCommand)) {
+            //----------------------------------------------------------------
+            if (quantityOfParameters < 3) {
+                throw std::invalid_argument("Invalid number of parameters (qop < 3)\n");
             }
-            else if (command == "pwd")  { return file->pwdFile(); }
-        }
-        else if (in(minThreeParameters, command)) {
+            //----------------------------------------------------------------
             //...
+            return getFunctionOfExistFile(aCommand, file, tokens)();
         }
-    }
-    catch (const FileNotFoundException &e) {
-        if (command == "touch") { createFile(tokens[1]); }
-        else { return e.what(); }
+        else {
+            throw std::invalid_argument("Invalid command");
+        }
     }
     catch (const std::out_of_range &e) { 
-        return std::string("Invalid argument: <command> \'argument: is not found\'");
+        return std::string("Invalid argument: <command> \'argument: is not found\'\n");
     }
     catch (std::exception &e) { return e.what(); }
 
-    return std::string{"\0"};
+    return std::string{""};
 }
