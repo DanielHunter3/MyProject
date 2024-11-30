@@ -1,10 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
 #include <memory>
 
-#include "customexcept.hpp"
 #include "filemenager.hpp"
 #include "file.hpp"
 #include "directory.hpp"
@@ -15,26 +13,21 @@ std::vector<std::string> directoryUserCommand(const std::vector<std::string>& to
                         const std::string& aCommand, 
                         int8_t& quantityOfParameters) 
 {
-    if (aCommand != "ls") {
+    if (aCommand != "ls" && aCommand != "cls") {
         //----------------------------------------------------------------
         if (quantityOfParameters == 0) {
             throw std::invalid_argument("Missing directory name");
         }
         //----------------------------------------------------------------
-        if (aCommand == "mkdir") { createDirectory(tokens[1]); }
-        else if (aCommand == "rmdir") { deleteDirectory(tokens[1]); }
-        else if (aCommand == "cd") {
-            changeDirectory(tokens[1]);
-            return getFilesAndDirectories(getCurrentWorkingDirectory());
-        }
+        getFunctionOfDirectory(aCommand, tokens.at(1))();
     }
     else {
         //----------------------------------------------------------------
         if (quantityOfParameters != 0) {
-            throw std::invalid_argument("Too many arguments for 'ls' command");
+            throw std::invalid_argument("Too many arguments for command");
         }
         //----------------------------------------------------------------
-        return getFilesAndDirectories(getCurrentWorkingDirectory());
+        getFunctionOfDirectory(aCommand)();
     }
 
     return std::vector<std::string>();
