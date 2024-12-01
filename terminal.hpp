@@ -4,6 +4,7 @@
 #include <array>
 
 #include "usercommand.hpp"
+#include "offinterfacefunctions.hpp"
 
 std::vector<std::string> getCommand(std::string& command) {
     std::vector<std::string> tokens;
@@ -28,6 +29,9 @@ bool getTerminal(const std::vector<std::string>& tokens) {
     }
 
     std::string command = tokens.at(0);
+    if (!isValidFunction(command)) {
+        throw std::invalid_argument("Invalid command (getTerminal)");
+    }
     int8_t quantityOfParameters = tokens.size() - 1;
 
     const std::array<std::string, 1> systemCommands { "exit" };

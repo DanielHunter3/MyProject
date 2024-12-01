@@ -20,18 +20,19 @@ const std::map<std::string, FileFunc> FILE_EXIST_COMMAND_MAP = {
             return file->readFile();
         }},
         {"echo", [&file, arguments]() {
-            file->writeFile(arguments[2]);
+            file->writeFile(arguments.at(2));
             return std::string{""};
         }},
         {"rename", [&file, arguments]() {
-            file->renameFile(arguments[2]);
+            file->renameFile(arguments.at(2));
             return std::string{""};
         }},
         {"copy", [&file, arguments]() {
-            file->copyFile(arguments[2]);
+            file->copyFile(arguments.at(2));
             return std::string{""};
         }},
         {"cut", [&file, arguments]() {
+            // arguments.at(2) is path without file
             file->copyFile(arguments.at(2));
             deleteFile(arguments.at(1));
             return std::string{""};
